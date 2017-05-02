@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Contact;
+use App\PhoneNumber;
 use Illuminate\Support\Facades\Lang;
 
 class ContactController extends Controller
@@ -33,7 +34,7 @@ class ContactController extends Controller
      */
     public function create()
     {
-        //
+       
     }
 
     /**
@@ -45,6 +46,22 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         //
+        $contact = new Contact;
+        $contact->name = $request->name;
+        $contact->email = $request->email;
+        $contact->sex = $request->sex;
+        $contact->home_address = $request->home_address;
+        $contact->website = $request->website;
+        $contact->save();
+
+        foreach($request->phone_numbers as $phone){
+            $phone_number = new PhoneNumber;
+            $phone_number->phone_number = $phone->phone_number;
+            $phone_number->number_type = $phone->number_type;
+            $phone_number->contact_id = $contact->id;
+            $phone_number->save();
+        }
+         return response()->json(['message' => "Your are contact is saved"], 200);
     }
 
     /**

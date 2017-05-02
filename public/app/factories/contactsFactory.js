@@ -5,6 +5,10 @@ angular.module('adminApp').factory('contactsFactory', ['$http', '$config', funct
         getContactList: function () {
             return $http.get($config.apiBase + 'contacts'); 
         },
+
+        saveContact : function(data){
+            return $http.post($config.apiBase + 'contacts',data);
+        },
     }
 
 

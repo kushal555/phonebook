@@ -10,19 +10,24 @@
                     <h3 class="box-title">{{Page.getTitle()}}</h3>
                 </div>
                 <div class="box-body">
-                    <form class="form-validation" ng-submit="add_user(user_form)" role="form" name="user_form">
+                    <form class="form-validation" ng-submit="submitContact(contact_form)" role="form" name="contact_form" novalidate>
                         <div class="row">
                             <div class="col-xs-6">
                                 <div class="form-group">
                                     <label>Name<code>*</code></label>
-                                    <input type="text" class="form-control" placeholder="Please enter first name" name="name" ng-model="contact.name" />
+                                    <input type="text" ng-minlength="3" ng-maxlength="8" ng-required="required" class="form-control" placeholder="Please enter first name" name="username" ng-model="contact.name" />
+                                    <span style="color:red" ng-if="contact_form.username.$dirty && contact_form.username.$invalid || submitted">
+                                        <span ng-if="contact_form.username.$error.required">Name is required.</span>
+                                        <span ng-if="contact_form.username.$error.minlength">Name is too short.</span>
+                                        <span ng-if="contact_form.username.$error.maxlength">Name is too long.</span>
+                                        </span>
                                 </div>
                             </div>
                             <div class="col-xs-6">
                                 <div class="form-group">
                                     <label>Gender<code>*</code></label>
-                                    <label class="radio"><input type="radio"  name="sex">Male</label>
-                                    <label class="radio"><input type="radio"  name="sex">Female</label>
+                                    <label class="radio"><input type="radio" ng-model="contact.sex"  name="sex">Male</label>
+                                    <label class="radio"><input type="radio" ng-model="contact.sex" name="sex">Female</label>
                                 </div>
                             </div>
                         </div>
@@ -30,52 +35,69 @@
                             <div class="col-xs-6">
                                 <div class="form-group">
                                     <label>Home Address<code>*</code></label>
-                                    <input type="text" class="form-control" googleplace name="home_address" placeholder="Please enter home address" ng-model="contact.home_address"
+                                    <input type="text" ng-required="required" class="form-control" googleplace name="home_address" placeholder="Please enter home address" ng-model="contact.home_address"
                                     />
+                                      <span style="color:red" ng-if="contact_form.home_address.$dirty && contact_form.home_address.$invalid || submitted">
+                                        <span ng-if="contact_form.home_address.$error.required">Home address is required.</span>
+                                        </span>
                                 </div>
                             </div>
                             <div class="col-xs-6">
                                 <div class="form-group">
                                     <label>Email<code>*</code></label>
-                                    <input type="text" class="form-control" name="email" placeholder="Please enter email" ng-model="contact.email" />
+                                    <input type="text" class="form-control" name="email" ng-required="required" placeholder="Please enter email" ng-model="contact.email" />
+                                    <span style="color:red" ng-if="contact_form.email.$dirty && contact_form.email.$invalid || submitted">
+                                        <span ng-if="contact_form.email.$error.required">Email is required.</span>
+                                        <span ng-if="contact_form.email.$error.email">Invalid email address.</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                          <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <a href="javascript:void(0);" ng-click="addMoreNumber()" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label>Website<code>*</code></label>
+                                    <input type="text" ng-required="required" class="form-control" name="website" placeholder="Please enter website" ng-model="contact.website" />
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-12" ng-repeat="phone_number in contact.phone_numbers track by $index">
+                        <div class="row" ng-repeat="phone_number in contact.phone_numbers track by $index">
                             <div class="col-md-4">
+                                <div class="form-group">
                                 <label>Number type</label>
-                                <select name="metalType{{$index}}" ng-model="jewellery.prices[$index].metal_id" ng-options="obj.id as obj.name for obj in metal_type | filter : filterJewelleryMetalTypes($index)"
+                                <select name="numberType{{$index}}" ng-model="contact.phone_numbers[$index].number_type" ng-options="obj.value as obj.label for obj in number_types"
                                     class="form-control" ng-required="true">
                                     </select>
-                                    <span style="color:red" ng-if="jewellery_form['metalType'+$index].$dirty && jewellery_form['metalType'+$index].$invalid || isSubmit">
-                                <span ng-if="jewellery_form['metalType'+$index].$error.required">Please select metal type</span>
+                                    <span style="color:red" ng-if="contact_form['numberType'+$index].$dirty && contact_form['numberType'+$index].$invalid || submitted">
+                                <span ng-if="contact_form['numberType'+$index].$error.required">Please select metal type</span>
                                     </span>
+                            </div>
                             </div>
                             <div class="col-md-4">
-                                <label>Price</label>
-                                <input type="text" class="form-control" ng-pattern="/^[0-9]{0,9}$/" ng-model="jewellery.prices[$index].price" name="price{{$index}}"
-                                    placeholder="Enter price" ng-required="true">
-                                    <span style="color:red" ng-if="jewellery_form['price'+$index].$dirty && jewellery_form['price'+$index].$invalid || isSubmit">
-                                <span ng-if="jewellery_form['price'+$index].$error.required">Please enter price</span>
-                                    <span ng-if="jewellery_form['price'+$index].$error.pattern">Please enter valid price</span>
+                                <div class="form-group">
+                                <label>Number</label>
+                                <input type="text" class="form-control" ng-pattern="/^[0-9]{10}$/" ng-model="contact.phone_numbers[$index].phone_number" name="phone_number{{$index}}"
+                                    placeholder="Enter Number" ng-required="true"/>
+                                    <span style="color:red" ng-if="contact_form['phone_number'+$index].$dirty && contact_form['phone_number'+$index].$invalid || submitted">
+                                <span ng-if="contact_form['phone_number'+$index].$error.required">Please enter number</span>
+                                    <span ng-if="contact_form['phone_number'+$index].$error.pattern">Please enter valid number</span>
                                     </span>
                             </div>
-                            <div class="col-md-3">
-                                <label>Supplier Currency</label>
-                                <input type="text" class="form-control" ng-model="jewellery.prices[$index].supplier_currency" name="supplier_currency{{$index}}"
-                                    placeholder="Enter supplier currency" ng-required="true">
-                                    <span style="color:red" ng-if="jewellery_form['supplier_currency'+$index].$dirty && jewellery_form['supplier_currency'+$index].$invalid || isSubmit">
-                                <span ng-if="jewellery_form['supplier_currency'+$index].$error.required">Please enter supplier currency</span>
-                                    </span>
                             </div>
                             <div class="col-md-1" ng-hide="$first">
                                 <label>&nbsp;</label>
-                                <a class="form-control btn btn-info" ng-click="removeJewelleryPrice($index)"><i class="fa fa-trash"></i></a>
+                                <a class="form-control btn btn-info" ng-click="removecontactNumber($index)"><i class="fa fa-trash"></i></a>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-info" ng-disabled="isSubmitted" align="center">{{btnName}}</button>
+                        <button type="submit" class="btn btn-info" ng-click="submitted=true" align="center">{{btnName}}</button>
                         <a type="submit" ui-sref="dashboard" class="btn btn-info" align="center">Cancel</a>
                     </form>
                 </div>
