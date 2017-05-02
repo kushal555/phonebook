@@ -1,0 +1,72 @@
+<!--<body class="hold-transition login-page">-->
+<div class="login-box">
+    <div class="login-logo">
+        <a href=""><b>Admin</b>Panel</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+        <div class="alert alert-danger alert-dismissable" ng-if="errMsg">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true" ng-click="errMsg=0">&times;</button>
+            <i class="icon fa fa-ban"></i> {{errMsg}}
+        </div>
+
+        <form method="post" name="loginForm" ng-submit="loginSubmit(loginForm.$valid)" novalidate>
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control" name="email" ng-model="email" placeholder="Username" required>
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                <span style="color:red" ng-show="loginForm.email.$dirty && loginForm.email.$invalid || isSubmit">
+                <span ng-show="loginForm.email.$error.required">Please enter username address</span>
+                </span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" name="password" ng-model="password" placeholder="Password" required>
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                <span style="color:red" ng-show="loginForm.password.$dirty && loginForm.password.$invalid || isSubmit">
+                <span ng-show="loginForm.password.$error.required">Please enter password</span>
+                </span>
+            </div>
+            <div class="row">
+                <!--<div class="col-xs-8">
+                    <div class="checkbox iCheck">
+                        <label>
+                            <input type="checkbox" /> Remember Me
+                        </label>
+                    </div>
+                </div>-->
+                <!-- /.col -->
+                <div class="col-xs-12">
+                    <!-- ng-disabled="loginForm.$invalid && isSubmit" -->
+                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                </div>
+                <!-- /.col -->
+            </div>
+        </form>
+
+        <!--<div class="social-auth-links text-center">
+            <p>- OR -</p>
+            <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign in using
+        Facebook</a>
+            <a href="#" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google-plus"></i> Sign in using
+        Google+</a>
+        </div>-->
+        <!-- /.social-auth-links -->
+
+        <!--<a href="">I forgot my password</a><br>
+        <a href="" class="text-center">Register a new membership</a>-->
+
+    </div>
+    <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+
+<script>
+    $(function() {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+    });
+</script>
+<!--</body>-->

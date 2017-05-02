@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html ng-app="adminApp" ng-controller='rootCtrl'>
+
+<head>
+    <!--<base href="/aurum-jaber/admin-panel/">-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Phone Book</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.5 -->
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+    <link rel="stylesheet" href="assets/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="assets/dist/css/skins/_all-skins.min.css">
+
+    <link rel="stylesheet" href="vendor/angular-datatables/dist/css/angular-datatables.css">
+    <link rel="stylesheet" href="vendor/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/angular-datatables/vendor/datatables/media/css/jquery.dataTables.css">
+
+    <!-- ng-dialog -->
+    <link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog.min.css">
+    <link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-default.min.css">
+    <link rel="stylesheet" href="bower_components/ng-img-crop/compile/unminified/ng-img-crop.css"/>
+
+    <!--ngToast-->
+    <link rel="stylesheet" href="bower_components/ngToast/dist/ngToast.css"/>
+    <link rel="stylesheet" href="bower_components/ngToast/dist/ngToast-animations.css"/>
+
+    <link rel="stylesheet" href="vendor/angular-datatables/dist/plugins/buttons/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="vendor/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- jQuery 2.1.4 -->
+    <script src="assets/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+
+    <!-- Bootstrap 3.3.5 -->
+    <script src="assets/bootstrap/js/bootstrap.min.js">
+
+    </script>
+    <!-- iCheck -->
+    <script src="assets/plugins/iCheck/icheck.min.js"></script>
+
+    <!-- FastClick -->
+    <script src="assets/plugins/fastclick/fastclick.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="assets/dist/js/app.min.js"></script>
+
+    <!-- SlimScroll 1.3.0 -->
+    <script src="assets/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <!-- // <script src="assets/dist/js/pages/dashboard2.js"></script> -->
+    <!-- AdminLTE for demo purposes -->
+    <script src="assets/dist/js/demo.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCnmAg1q-EbxfxJ_WwizoXE2Flo1haWMz4&libraries=places&sensor=false"></script>
+
+    <!-- Angular JS -->
+    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-route/angular-route.js"></script>
+    <script type="text/javascript" src="bower_components/oclazyload/dist/ocLazyLoad.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-spinner/dist/angular-spinner.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-datatables/vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-datatables/dist/plugins/colvis/angular-datatables.colvis.js"></script>
+    
+    <!--ngToast-->
+    <script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script type="text/javascript" src="bower_components/ngToast/dist/ngToast.js"></script>
+
+    <!--ng-text-truncate -->
+    <script type="text/javascript" src="vendor/ng-text-truncate-master/ng-text-truncate.js"></script>
+    <!--/ng-text-truncate -->
+
+    <!-- ng-file-upload -->
+    <script type="text/javascript" src="bower_components/ng-file-upload-shim/ng-file-upload-shim.min.js"></script>
+    <script type="text/javascript" src="bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+    <script type="text/javascript" src="bower_components/ng-img-crop/compile/unminified/ng-img-crop.js"></script>
+    <!--/ng-file-upload-->
+
+    <!--ng-dialog-->
+    <script src="bower_components/ng-dialog/js/ngDialog.min.js"></script>
+    <!--/ng-dialog-->
+
+
+    <script type="text/javascript" src="vendor/angular-datatables/dist/angular-datatables.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-datatables/dist/plugins/scroller/angular-datatables.scroller.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-datatables/dist/plugins/buttons/datatables.buttons.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-datatables/dist/plugins/buttons/buttons.colVis.min.js"></script>
+    <script type="text/javascript" src="app/app.js"></script>
+
+    <!--Dirctives-->
+    <script type="text/javascript" src="app/common/directives/ddTextCollapse.js"></script>
+
+    <!--Helpers-->
+    <script src="app/common/helpers/objectToFormData.js" type="text/javascript"></script>
+
+
+</head>
+<!--<span us-spinner="{radius:30, width:8, length: 16}"></span>-->
+
+<body class="hold-transition skin-blue {{bodyClasses}}">
+    <toast></toast>
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <!-- iCheck -->
+    <div class="wrapper" >
+        <header class="main-header" ng-include="'app/common/templates/header.html'">
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <!--<aside class="main-sidebar" ng-include="'app/common/templates/sidebar.html'" ng-if="curState.name !='login'">
+        </aside>-->
+        <div class="content-wrapper" style="margin-left:0;" ui-view >
+
+        </div>
+        <footer class="main-footer" style="margin-left:0;" ng-include="'app/common/templates/footer.html'" >
+        </footer>
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark" ng-include="'app/common/templates/control_sidebar.html'" >
+        </aside>
+        <!-- /.control-sidebar -->
+        <div class="control-sidebar-bg"></div>
+    </div>
+    <!--<div ui-view ng-if="curState.name =='login'"></div>-->
+
+</body>
+
+</html>
