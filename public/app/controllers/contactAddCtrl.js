@@ -1,8 +1,12 @@
 angular.module('adminApp').controller('contactAddCtrl', [
     '$scope', 
     'contactsFactory',
+    '$state',
+    'ngToast',
 function($scope,
-    contactsFactory) {
+    contactsFactory,
+    $state,
+    ngToast) {
     $scope.pageName = 'Add Contact';
     $scope.btnName = "Add";
     $scope.number_types = [{label:'Select your number type',value : null},{value :'mobile', label: 'Mobile'},
@@ -21,13 +25,12 @@ function($scope,
     };
 
     $scope.submitContact = function(form){
-        if(form.$valid){
-            console.log($scope.contact);
-
+        if(form){
             contactsFactory.saveContact($scope.contact).then(function(response){
-                
+                ngToast.success({content: response.data.message});
+                $state.go("dashboard")
             },function(error){
-
+                ngToast.error({content: error.data.message|| "Something went wrong"});
             })
         }
     }

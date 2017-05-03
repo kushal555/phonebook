@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::post('get-contacts','ContactController@showDataTable');
+
 Route::resource('contacts', 'ContactController');
 
 Route::get('/user', function (Request $request) {

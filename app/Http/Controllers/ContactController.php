@@ -6,9 +6,18 @@ use Illuminate\Http\Request;
 use App\Contact;
 use App\PhoneNumber;
 use Illuminate\Support\Facades\Lang;
+use Yajra\Datatables\Datatables;
 
 class ContactController extends Controller
 {
+
+
+    public function showDataTable(){
+
+        $contacts = Contact::with('phoneNumbers');
+        return Datatables::of($contacts)
+                        ->make(true);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,12 +27,9 @@ class ContactController extends Controller
     {
         //
 
-        try {
-            $contacts=Contact::all();
-            return response()->json(['contacts' => $contacts], 200);
-        } catch (\Exception $ex) {
-            return response()->json(['error' => 'Something went wrong'], 422);
-        }
+        $users = Contact::select(['id', 'name', 'email', 'created_at', 'updated_at'])->get();
+
+        return Datatables::of($users)->make();
         
     }
 
@@ -46,6 +52,8 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         //
+         
+
         $contact = new Contact;
         $contact->name = $request->name;
         $contact->email = $request->email;
@@ -54,13 +62,15 @@ class ContactController extends Controller
         $contact->website = $request->website;
         $contact->save();
 
-        foreach($request->phone_numbers as $phone){
+        foreach($request->phone_numbers as $key=>$phone){
             $phone_number = new PhoneNumber;
-            $phone_number->phone_number = $phone->phone_number;
-            $phone_number->number_type = $phone->number_type;
+            $phone_number->phone_number = $phone['phone_number'];
+            $phone_number->number_type = $phone['number_type'];
             $phone_number->contact_id = $contact->id;
             $phone_number->save();
         }
+
+       
          return response()->json(['message' => "Your are contact is saved"], 200);
     }
 

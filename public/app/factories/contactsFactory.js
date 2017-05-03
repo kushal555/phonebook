@@ -1,15 +1,18 @@
-angular.module('adminApp').factory('contactsFactory', ['$http', '$config', function ($http, $config) {
+angular.module('adminApp').factory('contactsFactory', ['$http', '$q', '$config', function($http, $q, $config) {
+    var contactsFactory = {};
 
-    return {
+    contactsFactory.getContactList = function(data) {
+       return $http({
+                method: 'POST',
+                url: $config.apiBase + 'get-contacts',
+                data: $.param(data),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+    };
 
-        getContactList: function () {
-            return $http.get($config.apiBase + 'contacts'); 
-        },
+    contactsFactory.saveContact = function(data) {
+       return $http.post($config.apiBase + 'contacts', data);
+    };
 
-        saveContact : function(data){
-            return $http.post($config.apiBase + 'contacts',data);
-        },
-    }
-
-
+    return contactsFactory;
 }]);

@@ -13,6 +13,8 @@ var App = angular.module("adminApp", [
     'ngToast',
     'datatables.bootstrap',
     'datatables.colvis',
+    'ngIntlTelInput',
+    'ngMap'
     
     // 'angularSpinner',
 ]);
@@ -90,6 +92,8 @@ App.controller('rootCtrl', [
         ngDialog,
         Upload
     ) {
+
+        $rootScope.state = $state;
         //Add body class from state if exists
         $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
             $scope.curState = toState;
