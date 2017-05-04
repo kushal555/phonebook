@@ -14,8 +14,9 @@ var App = angular.module("adminApp", [
     'datatables.bootstrap',
     'datatables.colvis',
     'ngIntlTelInput',
-    'ngMap'
-    
+    'ngMap',
+    'chart.js'
+
     // 'angularSpinner',
 ]);
 
@@ -23,54 +24,65 @@ App.constant('$config', {
     apiBase: document.location.origin + '/phonebook/public/api/',
 });
 
-App.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', '$locationProvider', '$ocLazyLoadProvider', 'ngToastProvider', function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $ocLazyLoadProvider, ngToastProvider) {
+App.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', '$locationProvider', '$ocLazyLoadProvider', 'ngToastProvider', function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $ocLazyLoadProvider, ngToastProvider) {
 
-    app.config(['ngToastProvider', function (ngToastProvider) {
+    app.config(['ngToastProvider', function(ngToastProvider) {
         ngToastProvider.configure({
             animation: 'slide', // or 'fade'
-            timeout : 2000,
-            className : 'alert-'
+            timeout: 2000,
+            className: 'alert-'
         });
     }]);
 
     $stateProvider.state('dashboard', {
-        url: "/",
-        templateUrl: 'app/views/dashboard.html',
-        controller: 'dashboardCtrl',
-        data: { bodyClasses: 'sidebar-mini' },
-        resolve: {
-            loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
-                return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/dashboardCtrl.js']);
-            }]
-        }
-    })
-    .state('add_contact', {
-        url: "/add-contact",
-        templateUrl: 'app/views/add-cotnact.html',
-        controller: 'contactAddCtrl',
-        data: { bodyClasses: 'sidebar-mini' },
-        resolve: {
-            loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
-                return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/contactAddCtrl.js']);
-            }]
-        }
-    });
+            url: "/",
+            templateUrl: 'app/views/dashboard.html',
+            controller: 'dashboardCtrl',
+            data: { bodyClasses: 'sidebar-mini' },
+            resolve: {
+                loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/dashboardCtrl.js']);
+                }]
+            }
+        })
+        .state('add_contact', {
+            url: "/add-contact",
+            templateUrl: 'app/views/add-cotnact.html',
+            controller: 'contactAddCtrl',
+            data: { bodyClasses: 'sidebar-mini' },
+            resolve: {
+                loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/contactAddCtrl.js']);
+                }]
+            }
+        }).state('edit_contact', {
+            url: "/edit-contact/:id",
+            templateUrl: 'app/views/add-cotnact.html',
+            controller: 'contactEditCtrl',
+            data: { bodyClasses: 'sidebar-mini' },
+            resolve: {
+                loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/contactEditCtrl.js']);
+                }]
+
+            }
+        });
     $urlRouterProvider.otherwise("/");
     // $locationProvider.html5Mode(true);
 }]);
 
-var checkLogin = ['$http', '$q', '$config', '$state', '$rootScope', function ($http, $q, $config, $state, $rootScope) {
+var checkLogin = ['$http', '$q', '$config', '$state', '$rootScope', function($http, $q, $config, $state, $rootScope) {
 
     var defer = $q.defer();
     $http.get($config.apiBase + 'checkLogin')
-        .then(function (success) {
-            $rootScope.user = success.data;
-            defer.resolve(success);
-        },
-        function (error) {
-            $state.go('login');
-            defer.reject(error);
-        });
+        .then(function(success) {
+                $rootScope.user = success.data;
+                defer.resolve(success);
+            },
+            function(error) {
+                $state.go('login');
+                defer.reject(error);
+            });
     return defer.promise;
 }];
 
@@ -83,7 +95,7 @@ App.controller('rootCtrl', [
     '$rootScope',
     'ngDialog',
     'Upload',
-    function (
+    function(
         $scope,
         $state,
         $config,
@@ -95,7 +107,7 @@ App.controller('rootCtrl', [
 
         $rootScope.state = $state;
         //Add body class from state if exists
-        $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+        $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
             $scope.curState = toState;
             // Set class from routes dta property to body            
             if (angular.isDefined(toState.data) && angular.isDefined(toState.data.bodyClasses)) {
@@ -104,23 +116,23 @@ App.controller('rootCtrl', [
             }
         });
 
-        $scope.logout = function () {
+        $scope.logout = function() {
             $http.post($config.apiBase + 'logout')
-                .then(function (res) {
+                .then(function(res) {
                     $state.go('login');
                 });
         };
 
-        $rootScope.uploadImagePopup = function () {
+        $rootScope.uploadImagePopup = function() {
             return ngDialog.open({
                 template: 'app/common/templates/file_upload_popup_tmpl.html',
                 className: 'ngdialog-theme-default',
                 closeByEscape: false,
                 closeByDocument: false,
                 width: '40%',
-                controller: ['$scope', 'Upload', '$timeout', function ($scope, Upload, $timeout) {
+                controller: ['$scope', 'Upload', '$timeout', function($scope, Upload, $timeout) {
 
-                    $scope.submit = function (croppedDataUrl, picFile) {
+                    $scope.submit = function(croppedDataUrl, picFile) {
                         $scope.file = Upload.dataUrltoBlob(croppedDataUrl, picFile.name);
                         if ($scope.file) {
                             $scope.closeThisDialog($scope.file);
@@ -129,12 +141,13 @@ App.controller('rootCtrl', [
                 }],
             }).closePromise;
         };
-    }]);
+    }
+]);
 
-App.directive('numbersOnly', function () {
+App.directive('numbersOnly', function() {
     return {
         require: 'ngModel',
-        link: function (scope, element, attr, ngModelCtrl) {
+        link: function(scope, element, attr, ngModelCtrl) {
             function fromUser(text) {
                 if (text) {
                     var transformedInput = text.replace(/[^0-9]/g, '');
@@ -152,12 +165,12 @@ App.directive('numbersOnly', function () {
     };
 });
 
-App.directive('disallowSpaces', function () {
+App.directive('disallowSpaces', function() {
     return {
         restrict: 'A',
 
-        link: function ($scope, $element) {
-            $element.bind('input', function () {
+        link: function($scope, $element) {
+            $element.bind('input', function() {
                 $(this).val($(this).val().replace(/ /g, ''));
             });
         }
@@ -165,17 +178,17 @@ App.directive('disallowSpaces', function () {
 });
 
 App.directive('convertToNumber', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModel) {
-      ngModel.$parsers.push(function(val) {
-        return val != null ? parseInt(val, 10) : null;
-      });
-      ngModel.$formatters.push(function(val) {
-        return val != null ? '' + val : null;
-      });
-    }
-  };
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, ngModel) {
+            ngModel.$parsers.push(function(val) {
+                return val != null ? parseInt(val, 10) : null;
+            });
+            ngModel.$formatters.push(function(val) {
+                return val != null ? '' + val : null;
+            });
+        }
+    };
 });
 
 
@@ -190,9 +203,56 @@ App.directive('googleplace', function() {
 
             google.maps.event.addListener(scope.gPlace, 'place_changed', function() {
                 scope.$apply(function() {
-                    model.$setViewValue(element.val());                
+                    model.$setViewValue(element.val());
                 });
             });
         }
     };
 });
+
+App.directive('fileInput', ['$parse', function($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attributes) {
+            element.bind('change', function() {
+                $parse(attributes.fileInput)
+                    .assign(scope, element[0].files)
+                scope.$apply()
+            });
+        }
+    };
+}]);
+
+App.directive('validfile', function validFile() {
+
+    var validFormats = ['csv'];
+    return {
+        require: 'ngModel',
+        link: function(scope, elem, attrs, ctrl) {
+            ctrl.$validators.validFile = function() {
+                elem.on('change', function() {
+                    var value = elem.val(),
+                        ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();
+
+                    return validFormats.indexOf(ext) !== -1;
+                });
+            };
+        }
+    };
+});
+
+App.directive('fileModel', ['$parse', function($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+
+            element.bind('change', function() {
+                scope.$apply(function() {
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);

@@ -28,11 +28,11 @@
     <!-- ng-dialog -->
     <link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog.min.css">
     <link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-default.min.css">
-    <link rel="stylesheet" href="bower_components/ng-img-crop/compile/unminified/ng-img-crop.css"/>
+    <link rel="stylesheet" href="bower_components/ng-img-crop/compile/unminified/ng-img-crop.css" />
 
     <!--ngToast-->
-    <link rel="stylesheet" href="bower_components/ngToast/dist/ngToast.css"/>
-    <link rel="stylesheet" href="bower_components/ngToast/dist/ngToast-animations.css"/>
+    <link rel="stylesheet" href="bower_components/ngToast/dist/ngToast.css" />
+    <link rel="stylesheet" href="bower_components/ngToast/dist/ngToast-animations.css" />
 
     <link rel="stylesheet" href="vendor/angular-datatables/dist/plugins/buttons/buttons.dataTables.min.css">
     <link rel="stylesheet" href="vendor/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css">
@@ -50,7 +50,6 @@
 
     <!-- Bootstrap 3.3.5 -->
     <script src="assets/bootstrap/js/bootstrap.min.js">
-
     </script>
     <!-- iCheck -->
     <script src="assets/plugins/iCheck/icheck.min.js"></script>
@@ -79,7 +78,10 @@
     <script type="text/javascript" src="vendor/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js"></script>
     <script type="text/javascript" src="vendor/angular-datatables/dist/plugins/colvis/angular-datatables.colvis.js"></script>
     <script src="vendor/angular-datatables/dist/plugins/scroller/angular-datatables.scroller.min.js"></script>
-    
+
+    <script src="bower_components/chart.js/dist/Chart.min.js"></script>
+    <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+
     <!--ngToast-->
     <script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script type="text/javascript" src="bower_components/ngToast/dist/ngToast.js"></script>
@@ -126,19 +128,19 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <!-- iCheck -->
-    <div class="wrapper" >
+    <div class="wrapper">
         <header class="main-header" ng-include="'app/common/templates/header.html'">
         </header>
         <!-- Left side column. contains the logo and sidebar -->
         <!--<aside class="main-sidebar" ng-include="'app/common/templates/sidebar.html'" ng-if="curState.name !='login'">
         </aside>-->
-        <div class="content-wrapper" style="margin-left:0;" ui-view >
+        <div class="content-wrapper" style="margin-left:0;" ui-view>
 
         </div>
-        <footer class="main-footer" style="margin-left:0;" ng-include="'app/common/templates/footer.html'" >
+        <footer class="main-footer" style="margin-left:0;" ng-include="'app/common/templates/footer.html'">
         </footer>
         <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark" ng-include="'app/common/templates/control_sidebar.html'" >
+        <aside class="control-sidebar control-sidebar-dark" ng-include="'app/common/templates/control_sidebar.html'">
         </aside>
         <!-- /.control-sidebar -->
         <div class="control-sidebar-bg"></div>

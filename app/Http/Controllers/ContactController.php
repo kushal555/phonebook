@@ -7,6 +7,9 @@ use App\Contact;
 use App\PhoneNumber;
 use Illuminate\Support\Facades\Lang;
 use Yajra\Datatables\Datatables;
+use Validator;
+use Carbon\Carbon;
+use Excel;
 
 class ContactController extends Controller
 {
@@ -94,6 +97,8 @@ class ContactController extends Controller
     public function edit($id)
     {
         //
+        $contact= Contact::where("id",$id)->with('phoneNumbers')->first();
+         return response()->json(['contact' => $contact], 200);
     }
 
     /**
@@ -106,6 +111,33 @@ class ContactController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $contact = Contact::find($id);
+        $contact->name = $request->name;
+        $contact->email = $request->email;
+        $contact->sex = $request->sex;
+        $contact->home_address = $request->home_address;
+        $contact->website = $request->website;
+        $contact->save();
+
+        // Delete the Deleted Phone number
+        // foreach($request->phone_numbers_delete as $phone){
+        //     $phone_number = isset($phone['id'])? PhoneNumber::find($phone['id']): new PhoneNumber;
+        //     $phone_number->phone_number = $phone['phone_number'];
+        //     $phone_number->number_type = $phone['number_type'];
+        //     $phone_number->contact_id = $contact->id;
+        //     $phone_number->save();
+        // }
+        if(!empty($request->phone_numbers_delete)){
+            PhoneNumber::destroy($request->phone_numbers_delete);
+        }
+        
+         foreach($request->phone_numbers as $key=>$phone){
+            $phone_number = isset($phone['id'])? PhoneNumber::find($phone['id']): new PhoneNumber;
+            $phone_number->phone_number = $phone['phone_number'];
+            $phone_number->number_type = $phone['number_type'];
+            $phone_number->contact_id = $contact->id;
+            $phone_number->save();
+        }
     }
 
     /**
@@ -117,5 +149,28 @@ class ContactController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getGenderRatio(){
+
+        $user_info = \DB::table('contacts')
+                 ->select('sex', \DB::raw('count(*) as total'))
+                 ->groupBy('sex')
+                 ->get();
+       #$contact =Contact::groupBy('sex')->count();
+       
+    //     list($key,$value)=array_divide($user_info);
+    //    print_r($key);exit;
+    //    dd($key);
+       return response()->json(['contact' => $user_info], 200);
+    }
+
+    public function importCsvFile(Request $request){
+        // dd($request->files->extension());
+        
+        $current_time = Carbon::now()->toDayDateTimeString();
+        Validator::make($request->all(),["files"=>"required|mimes:csv,txt"])->validate();
+        $path = $request->files->move('files', $current_time.'.csv');
+        dd($path);
     }
 }

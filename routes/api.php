@@ -14,6 +14,9 @@ use Illuminate\Http\Request;
 */
 
 Route::post('get-contacts','ContactController@showDataTable');
+Route::get('get-gender-ratio','ContactController@getGenderRatio');
+Route::post('import-contacts','ContactController@importCsvFile');
+
 
 Route::resource('contacts', 'ContactController');
 
