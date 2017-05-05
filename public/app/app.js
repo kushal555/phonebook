@@ -223,23 +223,28 @@ App.directive('fileInput', ['$parse', function($parse) {
     };
 }]);
 
-App.directive('validfile', function validFile() {
-
-    var validFormats = ['csv'];
+App.directive('validFile', function () {
     return {
         require: 'ngModel',
-        link: function(scope, elem, attrs, ctrl) {
-            ctrl.$validators.validFile = function() {
-                elem.on('change', function() {
-                    var value = elem.val(),
-                        ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();
+        link: function (scope, el, attrs, ngModel) {
 
-                    return validFormats.indexOf(ext) !== -1;
-                });
+            ngModel.$render = function () {
+                if (el[0].files && el[0].files.length) {
+                    ngModel.$setViewValue(el[0].files[0]);
+                    //scope.upload();
+                }
             };
+
+            el.bind('change', function () {
+                scope.$apply(function () {
+                    ngModel.$render();
+                });
+            });
+
         }
-    };
+    }
 });
+
 
 App.directive('fileModel', ['$parse', function($parse) {
     return {

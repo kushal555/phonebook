@@ -89,7 +89,7 @@ angular.module('adminApp').controller('dashboardCtrl', [
         $scope.import = {};
         $scope.importContactFromCSV = function(valid) {
             console.log('file is ');
-            console.dir($scope.import);
+            console.dir($scope.import.csv_file);
             if (valid) {
                 contactsFactory.imporFromCsv($scope.import).then(function(res) {}, function() {});
             }

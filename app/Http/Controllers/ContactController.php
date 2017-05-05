@@ -10,6 +10,7 @@ use Yajra\Datatables\Datatables;
 use Validator;
 use Carbon\Carbon;
 use Excel;
+use Illuminate\Support\Facades\File;
 
 class ContactController extends Controller
 {
@@ -168,9 +169,31 @@ class ContactController extends Controller
     public function importCsvFile(Request $request){
         // dd($request->files->extension());
         
-        $current_time = Carbon::now()->toDayDateTimeString();
-        Validator::make($request->all(),["files"=>"required|mimes:csv,txt"])->validate();
-        $path = $request->files->move('files', $current_time.'.csv');
-        dd($path);
+            #dd($request->csv_file->guessClientExtension());
+            $filePath = $request->csv_file;
+            if ($filePath->guessClientExtension() != "csv") {
+                return response()->json(['error' =>"Only CSV file allowed"], 422);
+            }
+
+            
+
+        $path = public_path() . '/contact-csv';
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0755,true);
+        }    
+
+        $imageName = time() . '.' . $request->csv_file->getClientOriginalExtension();
+        $temp_path = $request->csv_file->move($path, $imageName);
+
+        Excel::load($temp_path, function($reader) {
+
+            // Getting all results
+            $results = $reader->get();
+
+            // ->all() is a wrapper for ->get() and will work the same
+            $results = $reader->all();
+            dd($results);
+
+        });
     }
 }
