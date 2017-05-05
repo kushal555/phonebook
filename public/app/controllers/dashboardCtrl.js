@@ -6,13 +6,15 @@ angular.module('adminApp').controller('dashboardCtrl', [
     '$compile',
     'DTColumnDefBuilder',
     '$state',
+    'ngToast',
     function($scope,
         contactsFactory,
         DTOptionsBuilder,
         DTColumnBuilder,
         $compile,
         DTColumnDefBuilder,
-        $state) {
+        $state,
+        ngToast) {
 
 
         $scope.pageName = 'Dashboard';
@@ -91,7 +93,12 @@ angular.module('adminApp').controller('dashboardCtrl', [
             console.log('file is ');
             console.dir($scope.import.csv_file);
             if (valid) {
-                contactsFactory.imporFromCsv($scope.import).then(function(res) {}, function() {});
+                contactsFactory.imporFromCsv($scope.import).then(function(res) {
+                    ngToast.success({ content: res.data.message || 'Contacts imported successfully' });
+                    $scope.reloadData();
+                }, function() {
+                    ngToast.error({ content: error.data.message || "Something went wrong" });
+                });
             }
         }
 

@@ -11,6 +11,8 @@ use Validator;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Collection;
+
 
 class ContactController extends Controller
 {
@@ -185,15 +187,19 @@ class ContactController extends Controller
         $imageName = time() . '.' . $request->csv_file->getClientOriginalExtension();
         $temp_path = $request->csv_file->move($path, $imageName);
 
-        Excel::load($temp_path, function($reader) {
+        Excel::load($temp_path)->each(function (Collection $csvLine) {
 
-            // Getting all results
-            $results = $reader->get();
-
-            // ->all() is a wrapper for ->get() and will work the same
-            $results = $reader->all();
-            dd($results);
-
+            #$contact = new Contact;
+            $contact = Contact::firstOrNew(['name' => $csvLine->get('name')]);
+            #$contact->name = $csvLine->get('name');
+            $contact->email = $csvLine->get('email');
+            $contact->sex = $csvLine->get('sex');
+            $contact->home_address = $csvLine->get('home_address');
+            $contact->website = $csvLine->get('website');
+            $contact->save();
         });
+
+        return response()->json(['message' => "Contacts imported successfully"], 200);
+
     }
 }
