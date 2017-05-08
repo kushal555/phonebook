@@ -15,7 +15,8 @@ var App = angular.module("adminApp", [
     'datatables.colvis',
     'ngIntlTelInput',
     'ngMap',
-    'chart.js'
+    'chart.js',
+    'ezfb'
 
     // 'angularSpinner',
 ]);
@@ -24,51 +25,83 @@ App.constant('$config', {
     apiBase: document.location.origin + '/phonebook/public/api/',
 });
 
-App.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', '$locationProvider', '$ocLazyLoadProvider', 'ngToastProvider', function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $ocLazyLoadProvider, ngToastProvider) {
+App.config(['$stateProvider',
+    '$urlRouterProvider',
+    '$httpProvider',
+    '$locationProvider',
+    '$ocLazyLoadProvider',
+    'ngToastProvider',
+    'ezfbProvider',
+    function($stateProvider,
+        $urlRouterProvider,
+        $httpProvider,
+        $locationProvider,
+        $ocLazyLoadProvider,
+        ngToastProvider,
+        ezfbProvider) {
 
-    app.config(['ngToastProvider', function(ngToastProvider) {
-        ngToastProvider.configure({
-            animation: 'slide', // or 'fade'
-            timeout: 2000,
-            className: 'alert-'
+        app.config(['ngToastProvider', function(ngToastProvider) {
+            ngToastProvider.configure({
+                animation: 'slide', // or 'fade'
+                timeout: 2000,
+                className: 'alert-'
+            });
+        }]);
+
+        ezfbProvider.setInitParams({
+            // This is my FB app id for plunker demo app
+            appId: '1441506302758635',
+
+            // Module default is `v2.6`.
+            // If you want to use Facebook platform `v2.3`, you'll have to add the following parameter.
+            // https://developers.facebook.com/docs/javascript/reference/FB.init
+            version: 'v2.9'
         });
-    }]);
 
-    $stateProvider.state('dashboard', {
-            url: "/",
-            templateUrl: 'app/views/dashboard.html',
-            controller: 'dashboardCtrl',
-            data: { bodyClasses: 'sidebar-mini' },
-            resolve: {
-                loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/dashboardCtrl.js']);
-                }]
-            }
-        })
-        .state('add_contact', {
-            url: "/add-contact",
-            templateUrl: 'app/views/add-cotnact.html',
-            controller: 'contactAddCtrl',
-            data: { bodyClasses: 'sidebar-mini' },
-            resolve: {
-                loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/contactAddCtrl.js']);
-                }]
-            }
-        }).state('edit_contact', {
-            url: "/edit-contact/:id",
-            templateUrl: 'app/views/add-cotnact.html',
-            controller: 'contactEditCtrl',
-            data: { bodyClasses: 'sidebar-mini' },
-            resolve: {
-                loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
-                    return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/contactEditCtrl.js']);
-                }]
+        $stateProvider.state('dashboard', {
+                url: "/",
+                templateUrl: 'app/views/dashboard.html',
+                controller: 'dashboardCtrl',
+                data: { bodyClasses: 'sidebar-mini' },
+                resolve: {
+                    loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/dashboardCtrl.js']);
+                    }]
+                }
+            })
+            .state('add_contact', {
+                url: "/add-contact",
+                templateUrl: 'app/views/add-cotnact.html',
+                controller: 'contactAddCtrl',
+                data: { bodyClasses: 'sidebar-mini' },
+                resolve: {
+                    loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/contactAddCtrl.js']);
+                    }]
+                }
+            }).state('edit_contact', {
+                url: "/edit-contact/:id",
+                templateUrl: 'app/views/add-cotnact.html',
+                controller: 'contactEditCtrl',
+                data: { bodyClasses: 'sidebar-mini' },
+                resolve: {
+                    loadMyFiles: ['$ocLazyLoad', function($ocLazyLoad) {
+                        return $ocLazyLoad.load(['app/factories/contactsFactory.js', 'app/controllers/contactEditCtrl.js']);
+                    }]
 
-            }
-        });
-    $urlRouterProvider.otherwise("/");
-    // $locationProvider.html5Mode(true);
+                }
+            });
+        $urlRouterProvider.otherwise("/");
+        // $locationProvider.html5Mode(true);
+    }
+]);
+
+App.run(['ezfb', function(ezfb) {
+    ezfb.init({
+        // This is my FB app id for plunker demo app
+        appId: '1441506302758635',
+        version: 'V2.9'
+    });
 }]);
 
 var checkLogin = ['$http', '$q', '$config', '$state', '$rootScope', function($http, $q, $config, $state, $rootScope) {
@@ -95,6 +128,9 @@ App.controller('rootCtrl', [
     '$rootScope',
     'ngDialog',
     'Upload',
+    'ezfb',
+    '$window',
+    '$location',
     function(
         $scope,
         $state,
@@ -102,7 +138,9 @@ App.controller('rootCtrl', [
         $http,
         $rootScope,
         ngDialog,
-        Upload
+        Upload,
+        ezfb,
+        $window, $location
     ) {
 
         $rootScope.state = $state;
@@ -116,7 +154,92 @@ App.controller('rootCtrl', [
             }
         });
 
+
+        updateLoginStatus(updateApiMe);
+
+        $scope.login = function() {
+            /**
+             * Calling FB.login with required permissions specified
+             * https://developers.facebook.com/docs/reference/javascript/FB.login/v2.0
+             */
+            ezfb.login(function(res) {
+                /**
+                 * no manual $scope.$apply, I got that handled
+                 */
+                if (res.authResponse) {
+                    updateLoginStatus(updateApiMe);
+                }
+            }, { scope: 'email,user_likes' });
+        };
+
         $scope.logout = function() {
+            /**
+             * Calling FB.logout
+             * https://developers.facebook.com/docs/reference/javascript/FB.logout
+             */
+            ezfb.logout(function() {
+                updateLoginStatus(updateApiMe);
+            });
+        };
+
+        $scope.share = function() {
+            ezfb.ui({
+                    method: 'feed',
+                    name: 'angular-easyfb API demo',
+                    picture: 'http://plnkr.co/img/plunker.png',
+                    link: 'http://plnkr.co/edit/qclqht?p=preview',
+                    description: 'angular-easyfb is an AngularJS module wrapping Facebook SDK.' +
+                        ' Facebook integration in AngularJS made easy!' +
+                        ' Please try it and feel free to give feedbacks.'
+                },
+                function(res) {
+                    // res: FB.ui response
+                }
+            );
+        };
+
+        /**
+         * Update api('/me') result
+         */
+        function updateApiMe() {
+            ezfb.api('/me', function(res) {
+                $scope.apiMe = res;
+            });
+        }
+
+        $scope.getContacts = function() {
+            ezfb.api('me/friends?fields=id,name', function(res) {
+                $scope.friend_list = res;
+                console.log(res);
+            })
+        };
+
+        /**
+         * Update loginStatus result
+         */
+        function updateLoginStatus(more) {
+            ezfb.getLoginStatus(function(res) {
+                $scope.loginStatus = res;
+
+                (more || angular.noop)();
+            });
+        }
+
+
+        ezfb.getLoginStatus(function(res) {
+            $scope.loginStatus = res;
+
+            //(more || angular.noop)();
+        });
+
+        /**
+         * Origin: FB.api
+         */
+        ezfb.api('/me', function(res) {
+            $scope.apiMe = res;
+        });
+
+        $scope.logoutFB = function() {
             $http.post($config.apiBase + 'logout')
                 .then(function(res) {
                     $state.go('login');
@@ -223,20 +346,20 @@ App.directive('fileInput', ['$parse', function($parse) {
     };
 }]);
 
-App.directive('validFile', function () {
+App.directive('validFile', function() {
     return {
         require: 'ngModel',
-        link: function (scope, el, attrs, ngModel) {
+        link: function(scope, el, attrs, ngModel) {
 
-            ngModel.$render = function () {
+            ngModel.$render = function() {
                 if (el[0].files && el[0].files.length) {
                     ngModel.$setViewValue(el[0].files[0]);
                     //scope.upload();
                 }
             };
 
-            el.bind('change', function () {
-                scope.$apply(function () {
+            el.bind('change', function() {
+                scope.$apply(function() {
                     ngModel.$render();
                 });
             });
